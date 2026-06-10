@@ -1,7 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:args/args.dart';
-import 'package:encrypt/encrypt.dart';
+import 'package:encrypt_plus/encrypt.dart';
 
 void main(List<String> args) {
   final argParser = ArgParser();
@@ -12,7 +12,7 @@ void main(List<String> args) {
   argParser.addOption('base',
       abbr: 'b',
       defaultsTo: '64',
-      help: 'Bytes represented as base 64 or base 16 (Hexdecimal)');
+      help: 'Bytes represented as base 64 or base 16 (Hexadecimal)');
 
   argParser.addFlag('help',
       abbr: 'h', defaultsTo: false, help: 'Show this help message');
