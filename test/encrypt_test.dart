@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:clock/clock.dart';
-import 'package:encrypt/encrypt.dart';
+import 'package:encrypt_plus/encrypt.dart';
+import 'package:pointycastle/api.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 import 'package:test/test.dart';
 
@@ -69,6 +71,39 @@ void main() {
         });
       });
     });
+  });
+
+  group('AES GCM (authenticated)', () {
+    for (final padding in <String?>['PKCS7', null]) {
+      group('padding: $padding', () {
+        final encrypter =
+            Encrypter(AES(key, mode: AESMode.gcm, padding: padding));
+        final iv = IV.allZerosOfLength(12);
+
+        test('round-trip', () {
+          final encrypted = encrypter.encrypt(text, iv: iv);
+          expect(encrypter.decrypt(encrypted, iv: iv), equals(text));
+        });
+
+        test('appends authentication tag', () {
+          final encrypted = encrypter.encrypt(text, iv: iv);
+          // The ciphertext must be 16 bytes longer than the plaintext to
+          // accommodate the 128-bit GCM authentication tag.
+          expect(encrypted.bytes.length, equals(text.length + 16));
+        });
+
+        test('rejects tampered ciphertext', () {
+          final encrypted = encrypter.encrypt(text, iv: iv);
+          final tampered = Uint8List.fromList(encrypted.bytes);
+          tampered[0] ^= 0x01;
+
+          expect(
+            () => encrypter.decrypt(Encrypted(tampered), iv: iv),
+            throwsA(isA<InvalidCipherTextException>()),
+          );
+        });
+      });
+    }
   });
 
   group('AES (no padding)', () {
@@ -152,6 +187,19 @@ void main() {
         .parse(File('test/private.pem').readAsStringSync()) as RSAPrivateKey;
 
     test('encrypt/decrypt PKCS1', () {
+      final encrypter = Encrypter(
+        RSA(
+          publicKey: publicKey,
+          privateKey: privateKey,
+          encoding: RSAEncoding.PKCS1,
+        ),
+      );
+      final encrypted = encrypter.encrypt(text);
+
+      expect(encrypter.decrypt(encrypted), equals(text));
+    });
+
+    test('default encoding is OAEP', () {
       final encrypter = Encrypter(
         RSA(publicKey: publicKey, privateKey: privateKey),
       );

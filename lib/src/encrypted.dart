@@ -1,13 +1,13 @@
-part of encrypt;
+part of '../encrypt.dart';
 
-/// Represents an encripted value.
+/// Represents an encrypted value.
 class Encrypted {
   /// Creates an Encrypted object from a Uint8List.
   Encrypted(this._bytes);
 
   final Uint8List _bytes;
 
-  /// Creates an Encrypted object from a hexdecimal string.
+  /// Creates an Encrypted object from a hexadecimal string.
   Encrypted.fromBase16(String encoded) : _bytes = decodeHexString(encoded);
 
   /// Creates an Encrypted object from a Base64 string.
@@ -38,7 +38,7 @@ class Encrypted {
   /// Gets the Encrypted bytes.
   Uint8List get bytes => _bytes;
 
-  /// Gets the Encrypted bytes as a Hexdecimal representation.
+  /// Gets the Encrypted bytes as a Hexadecimal representation.
   String get base16 =>
       _bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
 
@@ -115,14 +115,19 @@ class Key extends Encrypted {
   /// The key is ALL ZEROS - NOT CRYPTOGRAPHICALLY SECURE!
   Key.allZerosOfLength(int length) : super.allZerosOfLength(length);
 
+  /// Derives a new [Key] from this key (typically a password) using PBKDF2.
+  ///
+  /// Uses HMAC-SHA256 as the underlying PRF. [iterationCount] defaults to
+  /// 600000, in line with current OWASP guidance for PBKDF2-HMAC-SHA256; for
+  /// sensitive data prefer passing an even higher value. The previous defaults
+  /// (HMAC-SHA1 with only 100 iterations) were far too weak and made
+  /// password-derived keys trivial to brute-force.
   Key stretch(int desiredKeyLength,
-      {int iterationCount = 100, Uint8List? salt}) {
-    if (salt == null) {
-      salt = SecureRandom(desiredKeyLength).bytes;
-    }
+      {int iterationCount = 600000, Uint8List? salt}) {
+    salt ??= SecureRandom(desiredKeyLength).bytes;
 
     final params = Pbkdf2Parameters(salt, iterationCount, desiredKeyLength);
-    final pbkdf2 = PBKDF2KeyDerivator(Mac('SHA-1/HMAC'))..init(params);
+    final pbkdf2 = PBKDF2KeyDerivator(Mac('SHA-256/HMAC'))..init(params);
 
     return Key(pbkdf2.process(_bytes));
   }

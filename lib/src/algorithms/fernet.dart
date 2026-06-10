@@ -1,4 +1,4 @@
-part of encrypt;
+part of '../../encrypt.dart';
 
 /// Wraps the Fernet Algorithm.
 class Fernet implements Algorithm {
@@ -52,7 +52,10 @@ class Fernet implements Algorithm {
     }
     _verifySignature(data);
     if (iv != null) {
-      throw StateError('IV must be infered from token');
+      // Fernet-specific: the IV is part of the token and must not be supplied
+      // by the caller, unlike the optional `iv` in the generic
+      // [Algorithm.decrypt] contract.
+      throw StateError('IV must be inferred from token');
     }
     iv = IV(Uint8List.fromList(data.sublist(9, 25)));
     final length = data.length;
@@ -79,9 +82,9 @@ class Fernet implements Algorithm {
       //  overloading problem -we'll all be dead when it overflows
       //  (max int of double/millseconds in year
       //   =9007199254740991 / 3.154e+10 = 285580 years from 1970)
-      final int hi=bdata.getUint32(0, Endian.big);
-      final int low=bdata.getUint32(4, Endian.big);
-      return (hi<<32|low);
+      final int hi = bdata.getUint32(0, Endian.big);
+      final int low = bdata.getUint32(4, Endian.big);
+      return (hi << 32 | low);
     }
   }
 
@@ -91,9 +94,27 @@ class Fernet implements Algorithm {
     final _digest = data.sublist(length - 32);
     var hmac = Hmac(sha256, _signKey.bytes);
     final digestConverted = hmac.convert(parts).bytes;
-    if (!ListEquality().equals(_digest, digestConverted)) {
+    // Constant-time comparison to avoid leaking information through timing
+    // (CWE-208). A short-circuiting comparison would let an attacker forge a
+    // valid HMAC by measuring how long verification takes per byte.
+    if (!_constantTimeEquals(_digest, digestConverted)) {
       throw StateError('Invalid token');
     }
+  }
+
+  /// Compares two byte sequences in constant time.
+  ///
+  /// The execution time depends only on the length of [a] and never on the
+  /// position of the first differing byte, preventing timing attacks.
+  static bool _constantTimeEquals(List<int> a, List<int> b) {
+    if (a.length != b.length) {
+      return false;
+    }
+    var mismatch = 0;
+    for (var i = 0; i < a.length; i++) {
+      mismatch |= a[i] ^ b[i];
+    }
+    return mismatch == 0;
   }
 
   Uint8List _encryptFromParts(Uint8List bytes, int currentTime, IV iv) {
@@ -106,8 +127,8 @@ class Fernet implements Algorithm {
       bdata.setUint64(0, currentTime, Endian.big);
     } catch (_) {
       // in dart2js there is no setUint64(), so fall back and improvise.
-      final int hi=(currentTime>>32)&0xffffffff;
-      final int low=currentTime&0xffffffff;
+      final int hi = (currentTime >> 32) & 0xffffffff;
+      final int low = currentTime & 0xffffffff;
       bdata.setUint32(0, hi, Endian.big);
       bdata.setUint32(4, low, Endian.big);
     }

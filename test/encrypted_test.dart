@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:encrypt/encrypt.dart';
+import 'package:encrypt_plus/encrypt.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -51,11 +51,15 @@ void main() {
       final desiredLength = 32;
       final salt = Uint8List(16);
       final shortKey = Key.fromUtf8('short');
-      final strechedKey = shortKey.stretch(desiredLength, salt: salt);
+      // Pin the iteration count so the expected vector is deterministic and
+      // independent of the (intentionally high) production default.
+      final strechedKey =
+          shortKey.stretch(desiredLength, iterationCount: 1000, salt: salt);
 
       expect(strechedKey.bytes.length, equals(desiredLength));
+      // Derived with PBKDF2-HMAC-SHA256 (1000 iterations, zero salt).
       expect(strechedKey.base64,
-          equals('ykT8qFmrPp7TJyzY+E2NoBNjfWymzKOs1OCbRsO67fo='));
+          equals('94GjaPPBxQrW8O4DxFxIJwJSh4LYe++FERCYlVL1BKE='));
     });
 
     test('Key.length', () {
