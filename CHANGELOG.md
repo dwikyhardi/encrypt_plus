@@ -1,3 +1,17 @@
+# 5.0.5
+
+- Packaging: renamed the package to `encrypt_plus` (import as `package:encrypt_plus/encrypt.dart`) and pointed `repository` at the fork.
+- Security: `Key.stretch` now uses PBKDF2-HMAC-SHA256 with a default of 600000 iterations (was HMAC-SHA1 with 100). Password-derived keys are dramatically harder to brute-force; pass `iterationCount` to tune.
+- Security: `RSA` now defaults to OAEP padding with a SHA-256 digest instead of PKCS#1 v1.5. PKCS#1 v1.5 is vulnerable to Bleichenbacher padding-oracle attacks and remains available via `RSAEncoding.PKCS1` for backwards compatibility.
+- Security: `Encrypter.decrypt`/`decrypt16`/`decrypt64` no longer decode with `allowMalformed: true` by default, so corrupted/tampered ciphertext in unauthenticated modes surfaces a `FormatException`. Opt back in with `allowMalformed: true`.
+- Robustness: `decodeHexString` now throws a `FormatException` for odd-length input instead of relying on an `assert` (which is stripped in release builds).
+- Docs: documented that Salsa20 is unauthenticated, clarified the Fernet `IV` behavior, and fixed several typos.
+- CI: run on the default branch (`main`/`master`) in addition to `5.x` and re-enabled `dart format` verification.
+- Security: use a constant-time HMAC comparison when verifying Fernet tokens to prevent timing attacks (CWE-208).
+- Security: AES-GCM now always runs through the authenticated cipher (even with `padding: null`), so the authentication tag is appended on encryption and verified on decryption. Tampered ciphertexts are now correctly rejected.
+- Security: `RSASigner` now delegates PKCS#1 v1.5 padding and ASN.1 `DigestInfo` encoding/verification to PointyCastle's well-tested signer instead of a hand-rolled implementation, and SHA-512 signatures are now supported.
+- Docs: documented that non-GCM AES modes are unauthenticated and recommended AES-GCM (or Fernet) for tamper resistance.
+
 # 5.0.4
 
 - Force Pointycastle version

@@ -1,24 +1,18 @@
-> [!CAUTION]
-> I'm not being able to properly maintain this package, so it is being archived. Feel free to use some fork as an alternative.
+# encrypt_plus
 
-# encrypt
-
-[![Pub Package](https://img.shields.io/pub/v/encrypt.svg)](https://pub.dartlang.org/packages/encrypt)
-[![Dart CI](https://github.com/leocavalcante/encrypt/actions/workflows/dart.yaml/badge.svg)](https://github.com/leocavalcante/encrypt/actions/workflows/dart.yaml)
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=E4F45BFVMFVQW)
+[![Pub Package](https://img.shields.io/pub/v/encrypt_plus.svg)](https://pub.dartlang.org/packages/encrypt_plus)
+[![Dart CI](https://github.com/dwikyhardi/encrypt_plus/actions/workflows/dart.yaml/badge.svg)](https://github.com/dwikyhardi/encrypt_plus/actions/workflows/dart.yaml)
 
 A set of high-level APIs over PointyCastle for two-way cryptography.
-
-> Looking for password hashing? Please, visit [password](https://github.com/leocavalcante/password-dart).
 
 ### Secure random
 
 You can generate cryptographically secure random keys and IVs for you project.
 
-Activate the encrypt package:
+Activate the encrypt_plus package:
 
 ```bash
-pub global activate encrypt
+dart pub global activate encrypt_plus
 ```
 
 Then use the `secure-random` command-line tool:
@@ -35,7 +29,7 @@ $ secure-random --help
 -l, --length       The length of the bytes
                    (defaults to "32")
 
--b, --base         Bytes represented as base 64 or base 16 (Hexdecimal)
+-b, --base         Bytes represented as base 64 or base 16 (Hexadecimal)
                    (defaults to "64")
 
 -h, --[no-]help    Show this help message
@@ -60,7 +54,7 @@ Current status is:
 #### AES
 
 ```dart
-import 'package:encrypt/encrypt.dart';
+import 'package:encrypt_plus/encrypt.dart';
 
 void main() {
   final plainText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
@@ -106,7 +100,7 @@ final encrypter = Encrypter(AES(key, mode: AESMode.cbc, padding: null));
 #### Salsa20
 
 ```dart
-import 'package:encrypt/encrypt.dart';
+import 'package:encrypt_plus/encrypt.dart';
 
 void main() {
   final plainText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
@@ -125,7 +119,7 @@ void main() {
 #### [Fernet](https://github.com/fernet/spec/blob/master/Spec.md)
 
 ```dart
-import 'package:encrypt/encrypt.dart';
+import 'package:encrypt_plus/encrypt.dart';
 import 'dart:convert';
 
 void main() {
@@ -152,7 +146,7 @@ void main() {
 
 ```dart
 import 'dart:io';
-import 'package:encrypt/encrypt.dart';
+import 'package:encrypt_plus/encrypt.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 
 void main() {
