@@ -3,9 +3,9 @@ permissions: read-all
 
 on:
   pull_request:
-    branches: [ 5.x ]
+    branches: [ main ]
   push:
-    branches: [ 5.x ]
+    branches: [ main ]
   schedule:
     - cron: '0 0 * * 0' # weekly
 
@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sdk: [stable, beta, dev]
+        sdk: [ stable, beta, dev ]
     steps:
       - uses: actions/checkout@v3
       - uses: dart-lang/setup-dart@v1
@@ -26,6 +26,6 @@ jobs:
 
       - run: dart analyze --fatal-infos
 
-      # - run: dart format --output=none --set-exit-if-changed .
+      - run: dart format --output=none --set-exit-if-changed .
 
       - run: dart test
