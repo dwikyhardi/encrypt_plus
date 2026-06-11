@@ -1,5 +1,5 @@
-import 'package:encrypt_plus/encrypt.dart';
-import 'package:encrypt_plus/encrypt_io.dart';
+import 'package:encryptor_plus/encrypt.dart';
+import 'package:encryptor_plus/encrypt_io.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 
 void main() async {

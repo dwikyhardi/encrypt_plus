@@ -1,4 +1,4 @@
-import 'package:encrypt_plus/encrypt.dart';
+import 'package:encryptor_plus/encrypt.dart';
 
 void main() {
   final key = Key.fromBase64('BwwfHxgKDwcXAxkWDwEHDBseIREPIA4QDxYOEBIDIRY=');

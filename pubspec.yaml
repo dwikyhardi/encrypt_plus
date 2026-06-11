@@ -1,4 +1,4 @@
-name: encrypt_plus
+name: encryptor_plus
 version: 5.0.5
 description: A set of high-level APIs over PointyCastle for two-way cryptography.
 repository: https://github.com/dwikyhardi/encrypt_plus

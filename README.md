@@ -1,6 +1,6 @@
-# encrypt_plus
+# encryptor_plus
 
-[![Pub Package](https://img.shields.io/pub/v/encrypt_plus.svg)](https://pub.dartlang.org/packages/encrypt_plus)
+[![Pub Package](https://img.shields.io/pub/v/encryptor_plus.svg)](https://pub.dartlang.org/packages/encryptor_plus)
 [![Dart CI](https://github.com/dwikyhardi/encrypt_plus/actions/workflows/dart.yaml/badge.svg)](https://github.com/dwikyhardi/encrypt_plus/actions/workflows/dart.yaml)
 
 A set of high-level APIs over PointyCastle for two-way cryptography.
@@ -9,10 +9,10 @@ A set of high-level APIs over PointyCastle for two-way cryptography.
 
 You can generate cryptographically secure random keys and IVs for you project.
 
-Activate the encrypt_plus package:
+Activate the encryptor_plus package:
 
 ```bash
-dart pub global activate encrypt_plus
+dart pub global activate encryptor_plus
 ```
 
 Then use the `secure-random` command-line tool:
@@ -54,7 +54,7 @@ Current status is:
 #### AES
 
 ```dart
-import 'package:encrypt_plus/encrypt.dart';
+import 'package:encryptor_plus/encrypt.dart';
 
 void main() {
   final plainText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
@@ -100,7 +100,7 @@ final encrypter = Encrypter(AES(key, mode: AESMode.cbc, padding: null));
 #### Salsa20
 
 ```dart
-import 'package:encrypt_plus/encrypt.dart';
+import 'package:encryptor_plus/encrypt.dart';
 
 void main() {
   final plainText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
@@ -119,7 +119,7 @@ void main() {
 #### [Fernet](https://github.com/fernet/spec/blob/master/Spec.md)
 
 ```dart
-import 'package:encrypt_plus/encrypt.dart';
+import 'package:encryptor_plus/encrypt.dart';
 import 'dart:convert';
 
 void main() {
@@ -146,7 +146,7 @@ void main() {
 
 ```dart
 import 'dart:io';
-import 'package:encrypt_plus/encrypt.dart';
+import 'package:encryptor_plus/encrypt.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 
 void main() {
